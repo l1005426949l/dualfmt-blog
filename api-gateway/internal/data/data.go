@@ -36,8 +36,8 @@ type Article struct {
 type Data struct {
 	// For now, we embed the repositories directly.
 	// In a real app, you might have concrete repo structs that hold clients.
-	articleRepo ArticleRepo
-	fileRepo    FileRepo
+	ArticleRepo ArticleRepo
+	FileRepo    FileRepo
 }
 
 // NewData creates a new Data object with mock repository implementations.
@@ -48,8 +48,8 @@ func NewData() (*Data, func(), error) {
 	mockFileRepo := &mockFileRepo{}
 
 	d := &Data{
-		articleRepo: mockArticleRepo,
-		fileRepo:    mockFileRepo,
+		ArticleRepo: mockArticleRepo,
+		FileRepo:    mockFileRepo,
 	}
 
 	// The cleanup function is used to close connections, etc.

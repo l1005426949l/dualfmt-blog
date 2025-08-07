@@ -12,6 +12,8 @@ import (
 	"api-gateway/internal/biz"
 
 
+	"os"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-kratos/kratos/v2"
@@ -19,6 +21,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/ratelimit"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	kratosHttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/vektah/gqlparser/v2/ast"
 )
 
 func main() {
@@ -36,14 +39,26 @@ func main() {
 	}
 	defer cleanup()
 
-	articleUsecase := biz.NewArticleUsecase(dataRepo.articleRepo, dataRepo.fileRepo)
+	articleUsecase := biz.NewArticleUsecase(dataRepo.ArticleRepo, dataRepo.FileRepo)
 	resolver := service.NewResolver(articleUsecase)
 
-	// Create a new gqlgen server
-	srv := handler.NewDefaultServer(service.NewExecutableSchema(service.Config{Resolvers: resolver}))
+	// --- 3. Create GraphQL server ---
+	// This is the manual setup that replaces the generated code.
+	schemaBytes, err := os.ReadFile("./internal/service/schema.graphqls")
+	if err != nil {
+		log.Fatalf("failed to read schema: %v", err)
+	}
+
+	executableSchema := graphql.NewExecutableSchema(graphql.Config{
+		Resolvers: resolver,
+		Sources: []*ast.Source{
+			{Name: "schema.graphqls", Input: string(schemaBytes)},
+		},
+	})
+	srv := handler.NewDefaultServer(executableSchema)
 
 
-	// --- 3. Create Kratos HTTP server with middleware ---
+	// --- 4. Create Kratos HTTP server with middleware ---
 	var opts []kratosHttp.ServerOption
 	if bc.Server.HTTP.Network != "" {
 		opts = append(opts, kratosHttp.Network(bc.Server.HTTP.Network))
