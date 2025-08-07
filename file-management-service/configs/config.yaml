@@ -1,0 +1,15 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 1s
+data:
+  minio:
+    endpoint: "minio:9000"
+    access_key_id: "minio"
+    secret_access_key: "minio123"
+    use_ssl: false
+  kafka:
+    addrs: "kafka:9092"

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package file.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "file-management-service/api/file/v1;v1";
+
+service File {
+  rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse) {
+    option (google.api.http) = {
+      post: "/v1/files/upload",
+      body: "*"
+    };
+  }
+  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse) {
+    option (google.api.http) = {
+      get: "/v1/files/download"
+    };
+  }
+}
+
+message UploadFileRequest {
+  oneof data {
+    FileInfo info = 1;
+    bytes chunk_data = 2;
+  }
+}
+
+message FileInfo {
+  string file_name = 1;
+  string file_type = 2;
+}
+
+message UploadFileResponse {
+  string file_path = 1;
+  uint64 size = 2;
+}
+
+message DownloadFileRequest {
+  string file_path = 1;
+}
+
+message DownloadFileResponse {
+  bytes chunk_data = 1;
+}
