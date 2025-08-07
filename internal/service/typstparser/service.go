@@ -1,0 +1,19 @@
+package typstparser
+
+import (
+	"context"
+	pb "github.com/cosmtrek/blog-platform/api/parser/v1"
+)
+
+type Service struct {
+	pb.UnimplementedTypstParserServer
+}
+
+func New() *Service {
+	return &Service{}
+}
+
+func (s *Service) Parse(ctx context.Context, req *pb.ParseRequest) (*pb.ParseResponse, error) {
+	htmlContent := "<h1>Hello from TypstParser</h1>"
+	return &pb.ParseResponse{Content: []byte(htmlContent)}, nil
+}
