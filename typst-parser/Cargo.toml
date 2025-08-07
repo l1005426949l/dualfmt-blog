@@ -9,7 +9,6 @@ serde = { version = "1.0.219", features = ["derive"] }
 tokio = { version = "1.47.1", features = ["full"] }
 tonic = "0.14.0"
 typst = "0.11.0"
-typst-html = "0.11.0"
 typst-assets = "0.11.0"
 
 [build-dependencies]
