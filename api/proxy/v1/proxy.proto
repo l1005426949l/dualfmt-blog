@@ -1,18 +1,13 @@
 syntax = "proto3";
-
 package proxy.v1;
-
 option go_package = "github.com/cosmtrek/blog-platform/api/proxy/v1;v1";
-
 service ParserProxy {
   rpc Parse(ProxyParseRequest) returns (ProxyParseResponse);
 }
-
 message ProxyParseRequest {
-  string format = 1; // "markdown" or "typst"
+  string format = 1;
   bytes content = 2;
 }
-
 message ProxyParseResponse {
-  bytes content = 1; // The parsed HTML
+  bytes content = 1;
 }

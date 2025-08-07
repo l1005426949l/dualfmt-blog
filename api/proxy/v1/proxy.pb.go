@@ -25,7 +25,7 @@ type ProxyParseRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Format  string `protobuf:"bytes,1,opt,name=format,proto3" json:"format,omitempty"` // "markdown" or "typst"
+	Format  string `protobuf:"bytes,1,opt,name=format,proto3" json:"format,omitempty"`
 	Content []byte `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 }
 
@@ -80,7 +80,7 @@ type ProxyParseResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Content []byte `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"` // The parsed HTML
+	Content []byte `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 }
 
 func (x *ProxyParseResponse) Reset() {

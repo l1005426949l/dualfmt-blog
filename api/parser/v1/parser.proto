@@ -1,21 +1,15 @@
 syntax = "proto3";
-
 package parser.v1;
-
 option go_package = "github.com/cosmtrek/blog-platform/api/parser/v1;v1";
-
 message ParseRequest {
   bytes content = 1;
 }
-
 message ParseResponse {
   bytes content = 1;
 }
-
 service MarkdownParser {
     rpc Parse(ParseRequest) returns (ParseResponse);
 }
-
 service TypstParser {
     rpc Parse(ParseRequest) returns (ParseResponse);
 }
