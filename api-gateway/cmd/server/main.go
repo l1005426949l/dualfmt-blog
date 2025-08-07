@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	appMiddleware "api-gateway/internal/middleware"
 	"api-gateway/internal/service"
