@@ -1,0 +1,25 @@
+# Kratos service configuration
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 1s
+    # QUIC (HTTP/3) configuration
+    # To enable, uncomment the following lines and provide valid certificate paths.
+    # network: udp
+    # addr: 0.0.0.0:8443
+    # tls:
+    #   cert_file: /path/to/your/cert.pem
+    #   key_file: /path/to/your/key.pem
+
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 1s
+
+data:
+  database:
+    driver: mysql
+    source: root:password@tcp(127.0.0.1:3306)/test
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s

@@ -1,0 +1,12 @@
+type Article {
+  id: ID!
+  title: String!
+  content: String!
+  version: String!
+  format: String! # markdown/typst
+}
+
+type Query {
+  article(id: ID!): Article
+  articles(tag: String, limit: Int): [Article]
+}

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package filemanagement.v1;
+
+option go_package = "api-gateway/api/filemanagement/v1;v1";
+
+// The FileManagement service handles raw file uploads and retrievals from object storage.
+service FileManagement {
+    // Uploads an article's source file and returns its storage path and hash.
+    rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+
+    // Retrieves an article's raw content based on its storage path.
+    rpc GetFile(GetFileRequest) returns (GetFileResponse);
+}
+
+message UploadFileRequest {
+    // A suggested filename, e.g., "my-first-post.md".
+    // The service may use this to construct the final storage path.
+    string filename = 1;
+    bytes content = 2;
+}
+
+message UploadFileResponse {
+    // The unique path where the file is stored in the object storage,
+    // e.g., "articles/12345/v1.0.0.md".
+    string storage_path = 1;
+    // The SHA256 hash of the content for integrity verification.
+    string content_hash = 2;
+}
+
+message GetFileRequest {
+    // The storage path of the file to retrieve.
+    string storage_path = 1;
+}
+
+message GetFileResponse {
+    bytes content = 1;
+}
