@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "my-project/api/user/v1";
+
+service UserService {
+
+}

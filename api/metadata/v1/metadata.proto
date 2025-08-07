@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package metadata.v1;
+
+option go_package = "my-project/api/metadata/v1";
+
+service MetadataService {
+  rpc GetArticle(GetArticleRequest) returns (GetArticleReply) {}
+  rpc ListArticles(ListArticlesRequest) returns (ListArticlesReply) {}
+}
+
+message Article {
+  string id = 1;
+  string title = 2;
+  string content = 3;
+  string version = 4;
+  string format = 5;
+}
+
+message GetArticleRequest {
+  string id = 1;
+}
+
+message GetArticleReply {
+  Article article = 1;
+}
+
+message ListArticlesRequest {
+  string tag = 1;
+  int32 limit = 2;
+}
+
+message ListArticlesReply {
+  repeated Article articles = 1;
+}
