@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package parser;
+
+message ParseRequest {
+  string content = 1;
+}
+
+message ParseResponse {
+  oneof result {
+    string html_content = 1;
+    string error = 2;
+  }
+}
+
+service TypstParser {
+  rpc Parse(ParseRequest) returns (ParseResponse);
+}
