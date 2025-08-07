@@ -1,0 +1,105 @@
+@page "/article/{Id}"
+@using Frontend.Models
+@using GraphQL
+@using GraphQL.Client.Abstractions
+@using Blazored.LocalStorage
+
+@inject IGraphQLClient GraphQLClient
+@inject ILocalStorageService localStorage
+
+@if (article == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h2>@article.Title</h2>
+    <p><em>Format: @article.Format</em></p>
+    <hr />
+    <div>
+        @((MarkupString)(article.Content ?? string.Empty))
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    private Article? article;
+    private const string CacheKeyPrefix = "article-";
+    private const string RecentArticlesKey = "recent-articles";
+
+    public class ArticleResponseType
+    {
+        public Article? Article { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cacheKey = $"{CacheKeyPrefix}{Id}";
+        article = await localStorage.GetItemAsync<Article>(cacheKey);
+
+        if (article == null)
+        {
+            await FetchArticleFromApi(cacheKey);
+        }
+        else
+        {
+            await UpdateRecentArticlesList(Id);
+        }
+    }
+
+    private async Task FetchArticleFromApi(string cacheKey)
+    {
+        var request = new GraphQLRequest
+        {
+            Query = @"
+                query article($id: ID!) {
+                  article(id: $id) {
+                    id
+                    title
+                    content
+                    format
+                  }
+                }",
+            Variables = new { id = Id }
+        };
+
+        try
+        {
+            var response = await GraphQLClient.SendQueryAsync<ArticleResponseType>(request);
+            article = response.Data.Article;
+
+            if (article != null)
+            {
+                await localStorage.SetItemAsync(cacheKey, article);
+                if (article.Id != null)
+                {
+                    await UpdateRecentArticlesList(article.Id);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching article: {ex.Message}");
+            article = new Article { Id = Id, Title = "Error loading article", Content = ex.Message, Format = "error" };
+        }
+    }
+
+    private async Task UpdateRecentArticlesList(string articleId)
+    {
+        var recentArticles = await localStorage.GetItemAsync<List<string>>(RecentArticlesKey) ?? new List<string>();
+
+        recentArticles.Remove(articleId);
+        recentArticles.Insert(0, articleId);
+
+        if (recentArticles.Count > 5)
+        {
+            var oldestArticleId = recentArticles.Last();
+            recentArticles.RemoveAt(5);
+            await localStorage.RemoveItemAsync($"{CacheKeyPrefix}{oldestArticleId}");
+        }
+
+        await localStorage.SetItemAsync(RecentArticlesKey, recentArticles);
+    }
+}

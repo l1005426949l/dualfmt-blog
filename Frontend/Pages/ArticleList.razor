@@ -1,0 +1,67 @@
+@page "/articles"
+@using Frontend.Models
+@using GraphQL
+@using GraphQL.Client.Abstractions
+
+@inject IGraphQLClient GraphQLClient
+
+<h3>Articles</h3>
+
+<input type="text" class="form-control" placeholder="Search articles..." @bind="searchTerm" @bind:event="oninput" />
+
+@if (articles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul class="list-group mt-3">
+        @foreach (var article in articles)
+        {
+            <li class="list-group-item">
+                <a href="/article/@article.Id">@article.Title</a>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private string? searchTerm;
+    private List<Article>? articles;
+
+    public class ArticlesResponseType
+    {
+        public List<Article>? Articles { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new GraphQLRequest
+        {
+            Query = @"
+                query {
+                  articles {
+                    id
+                    title
+                  }
+                }"
+        };
+
+        try
+        {
+            var response = await GraphQLClient.SendQueryAsync<ArticlesResponseType>(request);
+            articles = response.Data.Articles;
+        }
+        catch (Exception ex)
+        {
+            // For now, we'll just log the error and use dummy data as a fallback.
+            Console.WriteLine($"Error fetching articles: {ex.Message}");
+            articles = new List<Article>
+            {
+                new Article { Id = "1", Title = "Understanding Blazor (fallback)", Format = "markdown" },
+                new Article { Id = "2", Title = "Getting Started with Typst (fallback)", Format = "typst" },
+                new Article { Id = "3", Title = "Advanced GraphQL (fallback)", Format = "markdown" }
+            };
+        }
+    }
+}
